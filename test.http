@@ -1,0 +1,16 @@
+GET http://localhost:8080/albums
+
+
+###
+POST http://localhost:8080/albums
+Content-Type: application/json
+
+{
+    "id": "123",
+    "title": "foo",
+    "artist": "hi",
+    "price": 50.00
+}
+
+###
+GET http://localhost:8080/albums/123
