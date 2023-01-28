@@ -1,15 +1,15 @@
 package dto
 
-import entity "github.com/taehioum/gin-tonic/pkg/core/entity/album"
+import model "github.com/taehioum/gin-tonic/pkg/core/model/album"
 
 type Album struct {
-	ID     string  `json:"id"`
+	ID     uint    `json:"id"`
 	Title  string  `json:"title"`
 	Artist string  `json:"artist"`
 	Price  float64 `json:"price"`
 }
 
-func FromAlbum(alb *entity.Album) *Album {
+func FromAlbum(alb *model.Album) *Album {
 
 	return &Album{
 		ID:     alb.ID,

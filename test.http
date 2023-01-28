@@ -6,11 +6,10 @@ POST http://localhost:8080/albums
 Content-Type: application/json
 
 {
-    "id": "123",
     "title": "foo",
-    "artist": "hi",
+    "artist": "hii",
     "price": 50.00
 }
 
 ###
-GET http://localhost:8080/albums/123
+GET http://localhost:8080/albums/1

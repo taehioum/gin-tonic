@@ -2,9 +2,10 @@ package album
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/taehioum/gin-tonic/pkg/core/dto"
-	entity "github.com/taehioum/gin-tonic/pkg/core/entity/album"
+	model "github.com/taehioum/gin-tonic/pkg/core/model/album"
 	"github.com/taehioum/gin-tonic/pkg/core/port"
 )
 
@@ -12,12 +13,14 @@ type Service struct {
 	albumRepo port.AlbumRepository
 }
 
-var _ port.AlbumService = &Service{}
+func New(repo port.AlbumRepository) *Service {
+	return &Service{albumRepo: repo}
+}
 
 func (s *Service) GetAlbums(ctx context.Context) []dto.Album {
 	albs, _ := s.albumRepo.GetAlbums(ctx)
 
-	res := make([]dto.Album, 0, len(entity.Albums))
+	res := make([]dto.Album, 0, len(albs))
 
 	for _, alb := range albs {
 		res = append(res, *dto.FromAlbum(alb))
@@ -26,24 +29,22 @@ func (s *Service) GetAlbums(ctx context.Context) []dto.Album {
 	return res
 }
 
-func (*Service) GetAlbum(ctx context.Context, id string) (alb *dto.Album) {
-	for _, a := range entity.Albums {
-		if a.ID == id {
-			return dto.FromAlbum(&a)
-		}
-	}
-	return nil
+func (s *Service) GetAlbum(ctx context.Context, id string) *dto.Album {
+	i, _ := strconv.Atoi(id)
+	alb, _ := s.albumRepo.GetAlbumById(ctx, uint(i))
+	return dto.FromAlbum(alb)
 }
 
-func (*Service) AddAlbum(ctx context.Context, req dto.AlbumCreateRequest) error {
+func (s *Service) AddAlbum(ctx context.Context, req dto.AlbumCreateRequest) error {
 
-	album := entity.Album{
-		ID:     req.ID,
+	album := model.Album{
 		Title:  req.Title,
 		Artist: req.Artist,
 		Price:  req.Price,
 	}
 
-	entity.Albums = append(entity.Albums, album)
+	s.albumRepo.Save(ctx, &album)
 	return nil
 }
+
+var _ port.AlbumService = &Service{}
