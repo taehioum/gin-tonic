@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/taehioum/gin-tonic/pkg/entity/album"
-	albumSvc "github.com/taehioum/gin-tonic/pkg/service/album"
+	"github.com/taehioum/gin-tonic/pkg/core/dto"
+	"github.com/taehioum/gin-tonic/pkg/core/port"
 )
 
 type AlbumController struct {
-	AlbumSvc albumSvc.Service
+	AlbumSvc port.AlbumService
 }
 
 func (ctl *AlbumController) GetAlbums(c *gin.Context) {
@@ -21,7 +21,7 @@ func (ctl *AlbumController) GetAlbums(c *gin.Context) {
 
 func (ctl *AlbumController) CreateAlbum(c *gin.Context) {
 
-	var newAlbum album.Album
+	var newAlbum dto.AlbumCreateRequest
 
 	// Call BindJSON to bind the received JSON to newAlbum.
 	if err := c.BindJSON(&newAlbum); err != nil {
