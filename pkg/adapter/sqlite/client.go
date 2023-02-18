@@ -32,7 +32,7 @@ func (s *Store) WithTx(ctx context.Context, fn func(context.Context) error) erro
 	txCtx := context.WithValue(ctx, ctxKeyTransaction{}, tx)
 
 	err := fn(txCtx)
-	if err == nil {
+	if err == nil && ctx.Err() == nil {
 		tx.Commit()
 	}
 	return err
