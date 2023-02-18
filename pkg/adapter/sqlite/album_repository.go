@@ -3,7 +3,10 @@ package sqlite
 import (
 	"context"
 
+	"github.com/pkg/errors"
 	model "github.com/taehioum/gin-tonic/pkg/core/model/album"
+	"github.com/taehioum/gin-tonic/pkg/pkgerr"
+	"gorm.io/gorm"
 )
 
 type AlbumRepository struct {
@@ -20,7 +23,12 @@ func (r *AlbumRepository) GetAlbumById(ctx context.Context, ID uint) (*model.Alb
 	var album model.Album
 	result := r.store.
 		getTx(ctx).
-		Find(&album, ID)
+		First(&album, ID)
+
+	err := result.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, pkgerr.ErrAlbumNotFound
+	}
 
 	return &album, result.Error
 }

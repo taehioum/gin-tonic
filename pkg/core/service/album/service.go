@@ -2,12 +2,14 @@ package album
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/pkg/errors"
 	"github.com/taehioum/gin-tonic/pkg/core/dto"
 	model "github.com/taehioum/gin-tonic/pkg/core/model/album"
 	"github.com/taehioum/gin-tonic/pkg/core/port"
+	"github.com/taehioum/gin-tonic/pkg/pkgerr"
 )
 
 type Service struct {
@@ -31,10 +33,15 @@ func (s *Service) GetAlbums(ctx context.Context) []dto.Album {
 	return res
 }
 
-func (s *Service) GetAlbum(ctx context.Context, id string) *dto.Album {
+func (s *Service) GetAlbum(ctx context.Context, id string) (*dto.Album, error) {
 	i, _ := strconv.Atoi(id)
-	alb, _ := s.albumRepo.GetAlbumById(ctx, uint(i))
-	return dto.FromAlbum(alb)
+	alb, err := s.albumRepo.GetAlbumById(ctx, uint(i))
+	if errors.Is(err, pkgerr.ErrAlbumNotFound) {
+		fmt.Println("not found")
+		return &dto.Album{}, err
+	}
+
+	return dto.FromAlbum(alb), nil
 }
 
 func (s *Service) AddAlbum(ctx context.Context, req dto.AlbumCreateRequest) error {

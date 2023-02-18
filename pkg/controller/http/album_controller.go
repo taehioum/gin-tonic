@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/taehioum/gin-tonic/pkg/core/dto"
 	"github.com/taehioum/gin-tonic/pkg/core/port"
+	"github.com/taehioum/gin-tonic/pkg/pkgerr"
 )
 
 type AlbumController struct {
@@ -36,8 +38,8 @@ func (ctl *AlbumController) GetAlbum(c *gin.Context) {
 
 	id := c.Param("id")
 
-	alb := ctl.AlbumSvc.GetAlbum(c.Request.Context(), id)
-	if alb == nil {
+	alb, err := ctl.AlbumSvc.GetAlbum(c.Request.Context(), id)
+	if errors.Is(err, pkgerr.ErrAlbumNotFound) {
 		c.Status(http.StatusNotFound)
 		return
 	}
