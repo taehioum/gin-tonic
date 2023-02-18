@@ -52,9 +52,9 @@ func (s *Service) AddAlbum(ctx context.Context, req dto.AlbumCreateRequest) erro
 		Price:  req.Price,
 	}
 
-	s.tm.WithTx(ctx, func(context.Context) error {
+	err := s.tm.WithTx(ctx, func(context.Context) error {
 		_, err := s.albumRepo.Save(ctx, &album)
 		return errors.Wrap(err, "failed to add album")
 	})
-	return nil
+	return err
 }

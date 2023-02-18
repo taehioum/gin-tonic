@@ -31,7 +31,11 @@ func (s *Store) WithTx(ctx context.Context, fn func(context.Context) error) erro
 
 	txCtx := context.WithValue(ctx, ctxKeyTransaction{}, tx)
 
-	return fn(txCtx)
+	err := fn(txCtx)
+	if err == nil {
+		tx.Commit()
+	}
+	return err
 }
 
 // if there is an ongoing transaction in current context, return that tx
