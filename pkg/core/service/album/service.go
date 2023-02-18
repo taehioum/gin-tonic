@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/pkg/errors"
 	"github.com/taehioum/gin-tonic/pkg/core/dto"
 	model "github.com/taehioum/gin-tonic/pkg/core/model/album"
 	"github.com/taehioum/gin-tonic/pkg/core/port"
@@ -11,10 +12,11 @@ import (
 
 type Service struct {
 	albumRepo port.AlbumRepository
+	tm        port.TrasactionManager
 }
 
-func New(repo port.AlbumRepository) *Service {
-	return &Service{albumRepo: repo}
+func New(repo port.AlbumRepository, tm port.TrasactionManager) *Service {
+	return &Service{albumRepo: repo, tm: tm}
 }
 
 func (s *Service) GetAlbums(ctx context.Context) []dto.Album {
@@ -43,8 +45,9 @@ func (s *Service) AddAlbum(ctx context.Context, req dto.AlbumCreateRequest) erro
 		Price:  req.Price,
 	}
 
-	s.albumRepo.Save(ctx, &album)
+	s.tm.WithTx(ctx, func(context.Context) error {
+		_, err := s.albumRepo.Save(ctx, &album)
+		return errors.Wrap(err, "failed to add album")
+	})
 	return nil
 }
-
-var _ port.AlbumService = &Service{}

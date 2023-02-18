@@ -15,7 +15,7 @@ func main() {
 	albumRepo := sqlite.NewAlbumRepository(db)
 
 	albumController := controller.AlbumController{
-		AlbumSvc: album.New(albumRepo),
+		AlbumSvc: album.New(albumRepo, db),
 	}
 
 	router.GET("/albums", albumController.GetAlbums)

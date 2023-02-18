@@ -4,23 +4,23 @@ import (
 	"context"
 
 	model "github.com/taehioum/gin-tonic/pkg/core/model/album"
-	"github.com/taehioum/gin-tonic/pkg/core/port"
-	"gorm.io/gorm"
 )
 
 type AlbumRepository struct {
-	db *gorm.DB
+	store *Store
 }
 
-func NewAlbumRepository(db *gorm.DB) *AlbumRepository {
-	db.AutoMigrate(&model.Album{})
-	return &AlbumRepository{db: db}
+func NewAlbumRepository(store *Store) *AlbumRepository {
+	store.db.AutoMigrate(&model.Album{})
+	return &AlbumRepository{store}
 }
 
 // GetAlbumById implements port.AlbumRepository
 func (r *AlbumRepository) GetAlbumById(ctx context.Context, ID uint) (*model.Album, error) {
 	var album model.Album
-	result := r.db.Find(&album, ID)
+	result := r.store.
+		getTx(ctx).
+		Find(&album, ID)
 
 	return &album, result.Error
 }
@@ -28,7 +28,9 @@ func (r *AlbumRepository) GetAlbumById(ctx context.Context, ID uint) (*model.Alb
 // GetAlbums implements port.AlbumRepository
 func (r *AlbumRepository) GetAlbums(ctx context.Context) ([]*model.Album, error) {
 	var albums []model.Album
-	result := r.db.Find(&albums)
+	result := r.store.
+		getTx(ctx).
+		Find(&albums)
 
 	res := make([]*model.Album, 0)
 
@@ -40,9 +42,9 @@ func (r *AlbumRepository) GetAlbums(ctx context.Context) ([]*model.Album, error)
 
 // Save implements port.AlbumRepository
 func (r *AlbumRepository) Save(ctx context.Context, alb *model.Album) (*model.Album, error) {
-	result := r.db.Create(alb)
+	result := r.store.
+		getTx(ctx).
+		Create(alb)
 
 	return alb, result.Error
 }
-
-var _ port.AlbumRepository = &AlbumRepository{}
