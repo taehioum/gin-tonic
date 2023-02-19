@@ -9,6 +9,6 @@ import (
 type AlbumRepository interface {
 	Save(context.Context, *model.Album) (*model.Album, error)
 
-	GetAlbumById(context.Context, uint) (*model.Album, error)
+	GetAlbumByID(context.Context, uint) (*model.Album, error)
 	GetAlbums(context.Context) ([]*model.Album, error)
 }

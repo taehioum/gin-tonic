@@ -18,8 +18,7 @@ func NewAlbumRepository(store *Store) *AlbumRepository {
 	return &AlbumRepository{store}
 }
 
-// GetAlbumById implements port.AlbumRepository
-func (r *AlbumRepository) GetAlbumById(ctx context.Context, ID uint) (*model.Album, error) {
+func (r *AlbumRepository) GetAlbumByID(ctx context.Context, ID uint) (*model.Album, error) {
 	var album model.Album
 	result := r.store.
 		getTx(ctx).

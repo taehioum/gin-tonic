@@ -35,7 +35,7 @@ func (s *Service) GetAlbums(ctx context.Context) []dto.Album {
 
 func (s *Service) GetAlbum(ctx context.Context, id string) (*dto.Album, error) {
 	i, _ := strconv.Atoi(id)
-	alb, err := s.albumRepo.GetAlbumById(ctx, uint(i))
+	alb, err := s.albumRepo.GetAlbumByID(ctx, uint(i))
 	if errors.Is(err, pkgerr.ErrAlbumNotFound) {
 		fmt.Println("not found")
 		return &dto.Album{}, err
