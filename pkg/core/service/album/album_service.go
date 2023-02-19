@@ -58,3 +58,21 @@ func (s *Service) AddAlbum(ctx context.Context, req dto.AlbumCreateRequest) erro
 	})
 	return err
 }
+
+func (s *Service) AddAlbum2(ctx context.Context, req dto.AlbumCreateRequest) error {
+
+	album := model.Album{
+		Title:  req.Title,
+		Artist: req.Artist,
+		Price:  req.Price,
+	}
+
+	tx, _ := s.tm.BeginTx(ctx)
+	defer tx.Rollback()
+
+	_, err := s.albumRepo.Save(tx.Ctx(), &album)
+	if err != nil {
+		tx.Commit()
+	}
+	return err
+}
