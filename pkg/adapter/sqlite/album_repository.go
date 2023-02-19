@@ -18,11 +18,11 @@ func NewAlbumRepository(store *Store) *AlbumRepository {
 	return &AlbumRepository{store}
 }
 
-func (r *AlbumRepository) GetAlbumByID(ctx context.Context, ID uint) (*model.Album, error) {
+func (r *AlbumRepository) GetAlbumByID(ctx context.Context, id uint) (*model.Album, error) {
 	var album model.Album
 	result := r.store.
 		getTx(ctx).
-		First(&album, ID)
+		First(&album, id)
 
 	err := result.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
